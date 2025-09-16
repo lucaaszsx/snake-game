@@ -1,5 +1,6 @@
 #include <SDL3/SDL.h>
 #include <stdlib.h>
+#include "settings.h"
 #include "game.h"
 
 SDL_Event event;
@@ -46,7 +47,24 @@ void game_tick(void) {
     if (game->snake == NULL || game->food == NULL)
         return;
     
-    snake_move();
+        point_t head = game->snake->body[0];
+
+        if (
+            (head.x == 0 || head.y == 0) || // check if the snake bumpts into the left/top walls
+            (head.x == MAP_COLS || head.y == MAP_ROWS) // check if the snake bumpts into the right/bottom walls
+        ) {
+            game->game_over = true;
+            return;
+        }
+
+        snake_move();
+
+        point_t new_head = game->snake->body[0];
+        food_t *food = game->food;
+
+        if (points_collide(new_head, food->pos)) {
+            snake_grow();
+        }
 }
 
 bool game_running(void) {

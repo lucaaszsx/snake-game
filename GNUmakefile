@@ -60,4 +60,4 @@ clean:
 run: all
 	./$(PROJ_NAME)
 
-.PHONY: all clean run
+.PHONY: all buildFolder clean run

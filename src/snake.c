@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include "settings.h"
 #include "snake.h"
-#include<SDL3/SDL.h>
+
 snake_t *snake = NULL;
 
 snake_t *snake_create(void) {
@@ -19,7 +19,7 @@ snake_t *snake_create(void) {
 
     snake->body[0] = p;
 
-    // Set the snake's initial direction to the direction fowards the farthest wall
+    // set the snake's initial direction to the direction fowards the farthest wall
     int dist_left = p.x;
     int dist_right = (MAP_COLS - 1) - p.x;
 
@@ -33,16 +33,24 @@ snake_t *snake_create(void) {
 }
 
 void snake_grow(void) {
+    // adds another part to the snake's body
     snake->size++;
-    snake->body = realloc(snake->body, snake->size);
-    // to-do: grow
+
+    int new_size = snake->size;
+    
+    snake->body = realloc(snake->body, new_size * sizeof(point_t));
+
+    point_t tail = snake->body[new_size - 2];
+    
+    snake->body[new_size - 1].x = tail.x;
+    snake->body[new_size - 1].y = tail.y;
 }
 
 void snake_set_dir(snake_dir dir) {
     snake_dir curr_dir = snake->dir;
-    SDL_Log("curr=%d,new=%d",curr_dir,dir);
+    
     if (
-        (dir != curr_dir) ||
+        (dir == curr_dir) ||
         ((curr_dir == LEFT && dir == RIGHT) ||
          (curr_dir == RIGHT && dir == LEFT) ||
          (curr_dir == UP && dir == DOWN) ||
@@ -70,10 +78,7 @@ void snake_move() {
             break;
     }
 
-    for (int i = snake->size - 1; i > 0; i--) {
-        snake->body[i].x += snake->body[i - 1].x;
-        snake->body[i].y += snake->body[i - 1].y;
-    }
+    for (int i = snake->size - 1; i > 0; i--) snake->body[i] = snake->body[i - 1];
 
     snake->body[0].x += dx;
     snake->body[0].y += dy;
