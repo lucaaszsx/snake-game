@@ -44,27 +44,35 @@ void game_handle_event(void) {
 }
 
 void game_tick(void) {
-    if (game->snake == NULL || game->food == NULL)
+    if (game->snake == NULL || game->food == NULL || game->game_over)
         return;
+
+    point_t next_head = snake_next_head();
+
+    // check if the snake bumps into thewalls
+    if (
+        next_head.x < 0 || next_head.y < 0 ||
+        next_head.x >= MAP_COLS || next_head.y >= MAP_ROWS
+    ) {
+        game->game_over = true;
+        return;
+    }
+
+    // check if the snake will collide itself
+    if (point_collide_arr(next_head, game->snake->body, game->snake->size)) {
+        game->game_over = true;
+        return;
+    }
+
+    snake_move();
+
+    point_t head = game->snake->body[0];
+    food_t *food = game->food;
     
-        point_t head = game->snake->body[0];
-
-        if (
-            (head.x == 0 || head.y == 0) || // check if the snake bumpts into the left/top walls
-            (head.x == MAP_COLS || head.y == MAP_ROWS) // check if the snake bumpts into the right/bottom walls
-        ) {
-            game->game_over = true;
-            return;
-        }
-
-        snake_move();
-
-        point_t new_head = game->snake->body[0];
-        food_t *food = game->food;
-
-        if (points_collide(new_head, food->pos)) {
-            snake_grow();
-        }
+    if (points_collide(head, food->pos)) {
+        snake_grow();
+        game->food = food_generate(game->snake);
+    }
 }
 
 bool game_running(void) {

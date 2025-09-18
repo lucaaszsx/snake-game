@@ -60,7 +60,7 @@ void snake_set_dir(snake_dir dir) {
     snake->dir = dir;
 }
 
-void snake_move() {
+point_t snake_next_head(void) {
     int dx = 0, dy = 0;
 
     switch (snake->dir) {
@@ -78,10 +78,18 @@ void snake_move() {
             break;
     }
 
+    point_t head = snake->body[0];
+
+    return (point_t){head.x + dx, head.y + dy};
+}
+
+void snake_move(void) {
+    point_t next_head = snake_next_head();
+
     for (int i = snake->size - 1; i > 0; i--) snake->body[i] = snake->body[i - 1];
 
-    snake->body[0].x += dx;
-    snake->body[0].y += dy;
+    snake->body[0].x = next_head.x;
+    snake->body[0].y = next_head.y;
 }
 
 void snake_destroy(void) {

@@ -25,7 +25,8 @@ typedef struct snake {
 snake_t *snake_create(void);
 void snake_grow(void);
 void snake_set_dir(snake_dir dir);
-void snake_move();
+point_t snake_next_head(void);
+void snake_move(void);
 void snake_destroy(void);
 
 #endif
