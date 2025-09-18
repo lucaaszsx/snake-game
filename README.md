@@ -52,9 +52,9 @@ make clean
 
 ## Controls
 
-|    Key    |    Action    |
-|--------------------------|
-| Arrows/WASD | move snake |
+| Key        | Action      |
+|------------|-------------|
+| Arrows/WASD | Move snake |
 
 ## License
 
